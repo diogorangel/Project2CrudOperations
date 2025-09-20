@@ -1,0 +1,134 @@
+Com base na estrutura de rotas que você forneceu e na documentação do Swagger, aqui estão algumas requisições formatadas para você testar no Thunder Client (ou em qualquer outro cliente HTTP, como o Postman).
+
+Para cada requisição, certifique-se de usar o método HTTP correto e o URL base http://localhost:3000.
+
+Books (Livros)
+1. Criar um Livro (POST)
+Esta requisição envia um novo livro para a API.
+
+URL: http://localhost:3000/books
+
+Método: POST
+
+Corpo da Requisição (Body):
+
+Selecione JSON como tipo de corpo.
+
+Cole o JSON a seguir:
+
+JSON
+
+{
+  "title": "O Hobbit",
+  "author": "J.R.R. Tolkien",
+  "isbn": "978-0618053267",
+  "published_date": "1937-09-21",
+  "genre": "Fantasia",
+  "pages": 310,
+  "publisher": "Houghton Mifflin",
+  "language": "Inglês"
+}
+2. Obter Todos os Livros (GET)
+Esta requisição lista todos os livros cadastrados na API.
+
+URL: http://localhost:3000/books
+
+Método: GET
+
+Corpo da Requisição (Body): Nenhum.
+
+3. Obter um Livro por ID (GET)
+Você precisa substituir [book_id] pelo ID de um livro que você já criou.
+
+URL: http://localhost:3000/books/[book_id]
+
+Método: GET
+
+Corpo da Requisição (Body): Nenhum.
+
+4. Atualizar um Livro (PUT)
+Use esta requisição para modificar os dados de um livro existente.
+
+URL: http://localhost:3000/books/[book_id]
+
+Método: PUT
+
+Corpo da Requisição (Body):
+
+Selecione JSON como tipo de corpo.
+
+Cole o JSON a seguir, alterando os dados que deseja atualizar:
+
+JSON
+
+{
+  "title": "O Hobbit (Edição Anotada)",
+  "author": "J.R.R. Tolkien",
+  "published_date": "2002-10-25"
+}
+5. Deletar um Livro (DELETE)
+Esta requisição remove um livro da API.
+
+URL: http://localhost:3000/books/[book_id]
+
+Método: DELETE
+
+Corpo da Requisição (Body): Nenhum.
+
+Authors (Autores)
+1. Criar um Autor (POST)
+URL: http://localhost:3000/authors
+
+Método: POST
+
+Corpo da Requisição (Body):
+
+Selecione JSON como tipo de corpo.
+
+Cole o JSON a seguir:
+
+JSON
+
+{
+  "name": "J.K. Rowling",
+  "bio": "Joanne Rowling, mais conhecida como J.K. Rowling, é uma escritora, roteirista e produtora cinematográfica britânica, notória por escrever a série de livros Harry Potter.",
+  "birth_date": "1965-07-31"
+}
+2. Obter Todos os Autores (GET)
+URL: http://localhost:3000/authors
+
+Método: GET
+
+Corpo da Requisição (Body): Nenhum.
+
+3. Obter um Autor por ID (GET)
+Substitua [author_id] pelo ID de um autor que você já criou.
+
+URL: http://localhost:3000/authors/[author_id]
+
+Método: GET
+
+Corpo da Requisição (Body): Nenhum.
+
+4. Atualizar um Autor (PUT)
+URL: http://localhost:3000/authors/[author_id]
+
+Método: PUT
+
+Corpo da Requisição (Body):
+
+Selecione JSON como tipo de corpo.
+
+Cole o JSON a seguir, alterando os dados que deseja atualizar:
+
+JSON
+
+{
+  "bio": "John Ronald Reuel Tolkien CBE FRSL foi um escritor, poeta, filólogo e professor universitário britânico. Ele é mais conhecido como o autor das obras de alta fantasia The Hobbit e O Senhor dos Anéis."
+}
+5. Deletar um Autor (DELETE)
+URL: http://localhost:3000/authors/[author_id]
+
+Método: DELETE
+
+Corpo da Requisição (Body): Nenhum.

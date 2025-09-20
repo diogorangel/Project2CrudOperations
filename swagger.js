@@ -13,10 +13,12 @@ const options = {
       {
         url: 'http://localhost:3000',
         description: 'Development server',
+        schemes: ['https', 'http']
       },
       {
         url: 'https://project2crudoperations.onrender.com',
         description: 'Production server',
+        schemes: ['https', 'http']
       },
     ],
   },
