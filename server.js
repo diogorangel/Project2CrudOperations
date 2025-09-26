@@ -6,10 +6,12 @@ const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy; 
 require('dotenv').config();
 
-// FIX 1: REQUIRED DEPENDENCIES ARE HERE (session and cors)
+// REQUIRED DEPENDENCIES 
 const session = require('express-session');
 const cors = require('cors'); 
 
+// 🎯 FIX: Adicionando a dependência do MongoDB Session Store
+const MongoDBStore = require('connect-mongodb-session')(session); // <-- NOVO REQUIRE
 
 // Adicione as bibliotecas do Swagger
 const swaggerUi = require('swagger-ui-express');
@@ -17,20 +19,39 @@ const swaggerDocument = require('./swagger.json'); // Importe o arquivo de espec
 
 const app = express();
 const port = process.env.PORT || 3000;
+const MONGODB_URI = process.env.MONGODB_URI; // <-- NOVO: Definindo a URI para o Store
+
+// Configuração do Session Store
+const store = new MongoDBStore({ // <-- NOVO: Configurando o Store
+    uri: MONGODB_URI,
+    collection: 'userSessions', // Nome da coleção no seu DB onde as sessões serão armazenadas
+});
+
+// Tratamento de erros do Store
+store.on('error', function(error) {
+    console.log('MongoDB Session Store Error:', error);
+});
+
 
 connectDB();
 
 // --- MIDDLEWARE ---
 app.use(bodyParser.json());
 
-// Session and Passport Middleware (must be first)
+// Session and Passport Middleware (AGORA PERSISTENTE NO MONGO)
 app.use(session({ 
-    secret: process.env.SESSION_SECRET || "default_secret", // ✅ SECURITY IMPROVEMENT: Use env variable for secret
+    secret: process.env.SESSION_SECRET || "default_secret", 
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // Alterado para 'false' para economizar no DB
+    store: store, // <-- AQUI É A MUDANÇA PRINCIPAL
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 1 semana (opcional, mas recomendado)
+    }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// ... (Restante do seu código permanece igual)
 
 // CORS Middleware (simplifies custom header logic below)
 app.use(cors());
@@ -67,25 +88,20 @@ passport.serializeUser(function(user, done){
 });
 
 passport.deserializeUser(function(id, done){
-    // FIX 2: Passport's deserialize signature is (id, done). The error 'err'
-    // in your original code was likely an undefined variable. 
     // This is a placeholder; replace 'null' with your actual Mongoose User model query:
     // User.findById(id, function(err, user){ done(err, user); });
-    
-    // Using done(null, user) where user is retrieved from DB by ID.
     done(null, { id: id, displayName: 'Placeholder User' }); 
 });
 
 // --- PRIMARY ROUTES ---
 
 // 1. GitHub Auth Routes
-app.get('/login', passport.authenticate('github', { scope: ['user:email'] })); // Add scope for better auth flow
+app.get('/login', passport.authenticate('github', { scope: ['user:email'] }));
 
 // FIX 3: GitHub Callback Route (Corrected to /auth/github/callback)
 app.get('/auth/github/callback', passport.authenticate('github', {
     failureRedirect: '/api-docs'}),
     (req,res) => {
-        // req.user is set by Passport upon successful authentication
         req.session.user = req.user;
         res.redirect('/');
     }
@@ -108,10 +124,8 @@ app.get('/', (req, res) => {
 
 // 3. Application Routers
 // FIX 4: Explicitly mount routers at their intended base paths 
-// (e.g., '/authors' routes start with /authors, not just /)
 app.use('/authors', require('./routes/authors'));
 app.use('/books', require('./routes/books'));
-// The users router (if needed for API endpoints) is also mounted here
 app.use('/users', require('./routes/users')); 
 
 
